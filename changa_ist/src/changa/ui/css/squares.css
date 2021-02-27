@@ -1,0 +1,6 @@
+.square-wrapper{
+    height: 100px;
+    width: 100px;
+    background-color: grey;
+    border: 3px solid black;
+}
