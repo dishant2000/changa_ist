@@ -2,6 +2,7 @@ import React,{useEffect,useState,createContext,useContext} from 'react'
 import '../css/board.css'
 import Squares from './squares'
 import {diceContext} from '../../../App'
+import Modal from 'react-modal'
 const p1 = [2,1,0,5,10,15,20,21,22,23,24,19,14,9,4,3,8,13,18,17,16,11,6,7,12]; //red
 const p2 = [10,15,20,21,22,23,24,19,14,9,4,3,2,1,0,5,6,7,8,13,18,17,16,11,12]; //blue
 const p3 = [22,23,24,19,14,9,4,3,2,1,0,5,10,15,20,21,16,11,6,7,8,13,18,17,12]; //pink
@@ -141,9 +142,42 @@ function Board() {
     const forceUpdate = React.useCallback(() => updateState({}), []);
     const {count} = useContext(diceContext);
     const [stateSQ,setStateSQ] = useState({squares : iniSQState});
+    const [winner,setWinner] = useState("None");
+    //const [isModelOpen,setIsModelOpener] = useState(false);
+    
+    const winCheck = ()=>{
+        let currState = stateSQ.squares;
+        console.log(currState[12].color);
+        if(currState[12].noOfGoti >= 4){
+            let winArr = currState[12].color;
+            winArr.sort();
+            let ct = 0;
+            let currC = winArr[0];
+            console.log("currC ",currC);
+            for(let i = 0; i < winArr.length; i++){
+                if(winArr[i] === currC){
+                    ct++;
+                    
+                }
+                else{
+                    ct = 1;
+                    currC = winArr[i];
+                }
+                if(ct >= 4){
+                    console.log("yea to chla hai")
+                    return currC;
+                }
+            }
+        }
+        return "None";
+    }
+    
     useEffect(() => {
-        // winCheck();
-    },[])
+        console.log("checking winner")
+        let win = winCheck();
+        setWinner(win)
+        
+    },[stateSQ])
     
     const generateNextIdx = (idx,color)=>{
         //console.log(idx," ",color);
@@ -382,7 +416,11 @@ function Board() {
         //console.log(stateSQ);
         
     }
-    
+    const resetBoard = ()=>{
+        console.log("reset wala chala");
+        setStateSQ({squares : iniSQState});
+        console.log(iniSQState)
+    }
     return (
         <squareContext.Provider value = {{
             stateSQ : stateSQ,
@@ -426,7 +464,10 @@ function Board() {
                     <Squares index = {24}/>
                 </div>
                 <div className = "test-w">
+                    <span>Winner is {winner}  </span>
+                    {/*<button onClick = {() => resetBoard()}>reset</button>*/}
                 </div>
+
             </div>
         </squareContext.Provider>
     )
